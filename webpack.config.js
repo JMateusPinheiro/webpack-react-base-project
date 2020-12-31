@@ -4,13 +4,23 @@ const HtmlWebPackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssets = require('optimize-css-assets-webpack-plugin');
-const DashboardPlugin = require('webpack-dashboard/plugin');
 const devMode = process.env.NODE_ENV === 'development';
 
 module.exports = {
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
+  },
+  devServer: {
+    contentBase: path.resolve(__dirname, 'src'),
+    compress: true,
+    port: 8000
+  },
+  resolve: {
+    modules: [path.resolve(__dirname, 'src'), path.resolve(__dirname, 'node_modules')],
+    alias: {
+      is: 'is_js'
+    }
   },
   module: {
     rules: [
@@ -39,6 +49,10 @@ module.exports = {
         ],
       },
       {
+        test: /\.(eot|com|ttf|woff|woff2)(\?v=\d+\.\d+\.\d+)?$/,
+        loader: 'url-loader?emitFile=false'
+      },
+      {
         test: /\.(jpe?g|png|gif|svg)$/i,
         loaders: [{
           loader: 'file-loader',
@@ -60,9 +74,7 @@ module.exports = {
     }),
     new CleanWebpackPlugin({
       cleanAfterEveryBuildPatterns: ['dist'],
-    }),
-    new webpack.ProgressPlugin(),
-    new DashboardPlugin(),
+    })
   ],
 };
 
